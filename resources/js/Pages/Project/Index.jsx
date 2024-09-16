@@ -6,7 +6,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 import { Head, Link, router } from "@inertiajs/react";
 
-import { SortHeader } from "@/Components";
+import { ProjectTableRow, SortHeader, Table } from "@/Components";
 
 function Index({ auth, projects, queryParams = null }) {
     queryParams = queryParams || {};
@@ -25,7 +25,7 @@ function Index({ auth, projects, queryParams = null }) {
     const onKeyPress = (name, e) => {
         if (e.key !== "Enter") return;
 
-        searchFieldChanged(name, e.target.value);
+        onSearchFieldChange(name, e.target.value);
     };
 
     const onSortChange = (name) => {
@@ -61,8 +61,22 @@ function Index({ auth, projects, queryParams = null }) {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
+                            <div>
+                                <TextInput
+                                    defaultValue={queryParams.name}
+                                    className="w-2/5 mb-5"
+                                    placeholder="Project Name"
+                                    onBlur={(e) =>
+                                        onSearchFieldChange(
+                                            "name",
+                                            e.target.value
+                                        )
+                                    }
+                                    onKeyPress={(e) => onKeyPress("name", e)}
+                                />
+                            </div>
                             <div className="overflow-auto">
-                                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                {/* <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2  border-gray-500">
                                         <tr className="text-nowrap">
                                             <th
@@ -128,24 +142,7 @@ function Index({ auth, projects, queryParams = null }) {
                                         <tr className="text-nowrap">
                                             <th className="px-3 py-2"></th>
                                             <th className="px-3 py-2"></th>
-                                            <th className="px-3 py-2">
-                                                <TextInput
-                                                    defaultValue={
-                                                        queryParams.name
-                                                    }
-                                                    className="w-full"
-                                                    placeholder="Project Name"
-                                                    onBlur={(e) =>
-                                                        onSearchFieldChange(
-                                                            "name",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                    onKeyPress={(e) =>
-                                                        onKeyPress("name", e)
-                                                    }
-                                                />
-                                            </th>
+                                            <th className="px-3 py-2"></th>
                                             <th className="px-3 py-2">
                                                 <SelectInput
                                                     defaultValue={
@@ -246,8 +243,70 @@ function Index({ auth, projects, queryParams = null }) {
                                             </tr>
                                         ))}
                                     </tbody>
-                                </table>
+                                </table> */}
                             </div>
+
+                            <Table
+                                columns="2rem minmax(min-content,2fr) 1fr 1fr 1fr 1fr 1fr"
+                                queryParams={queryParams}
+                                sortRoute="project.index"
+                            >
+                                <Table.Header>
+                                    <Table.SortableHeader
+                                        queryName="id"
+                                        label="ID"
+                                    />
+                                    <Table.BasicHeader label="Image" />
+                                    <Table.SortableHeader
+                                        queryName="name"
+                                        label="Name"
+                                    />
+                                    <th>
+                                        <SelectInput
+                                            defaultValue={queryParams.status}
+                                            className="w-full"
+                                            onChange={(e) =>
+                                                onSearchFieldChange(
+                                                    "status",
+                                                    e.target.value
+                                                )
+                                            }
+                                        >
+                                            <option value="">
+                                                Select Status...
+                                            </option>
+                                            <option value="in_progress">
+                                                In Progress
+                                            </option>
+                                            <option value="pending">
+                                                Pending
+                                            </option>
+                                            <option value="completed">
+                                                Completed
+                                            </option>
+                                        </SelectInput>
+                                    </th>
+                                    <Table.SortableHeader
+                                        queryName="created_at"
+                                        label="Created At"
+                                    />
+                                    <Table.SortableHeader
+                                        queryName="due_date"
+                                        label="Due Date"
+                                    />
+                                    <Table.BasicHeader label="Created By" />
+                                    <Table.BasicHeader label="Actions" />
+                                </Table.Header>
+                                <Table.Body
+                                    data={projects.data}
+                                    render={(project) => (
+                                        <ProjectTableRow
+                                            item={project}
+                                            key={project.id}
+                                        />
+                                    )}
+                                ></Table.Body>
+                            </Table>
 
                             <Pagination links={projects.meta.links} />
                         </div>

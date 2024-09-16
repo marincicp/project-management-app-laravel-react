@@ -1,3 +1,5 @@
 import SortHeader from "./SortHeader";
+import Table from "./Table";
+import ProjectTableRow from "./ProjectTableRow";
 
-export { SortHeader };
+export { SortHeader, Table, ProjectTableRow };
