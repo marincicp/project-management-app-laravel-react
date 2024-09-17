@@ -5,10 +5,9 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router } from "@inertiajs/react";
 import { ProjectTableRow, Table } from "@/Components";
 
-function Index({ auth, projects, queryParams = null }) {
+function Index({ auth, tasks, queryParams = null }) {
     queryParams = queryParams || {};
-    const queryParamsa = new URLSearchParams(location.search);
-    console.log(queryParamsa, "sd");
+    console.log(tasks, "tasks");
     const onSearchFieldChange = (name, value) => {
         if (value) {
             queryParams[name] = value;
@@ -25,34 +24,34 @@ function Index({ auth, projects, queryParams = null }) {
         onSearchFieldChange(name, e.target.value);
     };
 
-    const onSortChange = (name) => {
-        console.log(name);
-        console.log(queryParams);
+    // const onSortChange = (name) => {
+    //     console.log(name);
+    //     console.log(queryParams);
 
-        if (name === queryParams.sort_field) {
-            if (queryParams.sort_direction === "asc") {
-                queryParams.sort_direction = "desc";
-            } else {
-                queryParams.sort_direction = "asc";
-            }
-        } else {
-            queryParams.sort_field = name;
-            queryParams.sort_direction = "asc";
-        }
+    //     if (name === queryParams.sort_field) {
+    //         if (queryParams.sort_direction === "asc") {
+    //             queryParams.sort_direction = "desc";
+    //         } else {
+    //             queryParams.sort_direction = "asc";
+    //         }
+    //     } else {
+    //         queryParams.sort_field = name;
+    //         queryParams.sort_direction = "asc";
+    //     }
 
-        router.get(route("project.index"), queryParams);
-    };
+    //     router.get(route("project.index"), queryParams);
+    // };
 
     return (
         <AuthenticatedLayout
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Projects
+                    Tasks
                 </h2>
             }
         >
-            <Head title="Projects" />
+            <Head title="Tasks" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -62,7 +61,7 @@ function Index({ auth, projects, queryParams = null }) {
                                 <TextInput
                                     defaultValue={queryParams.name}
                                     className="w-2/5 mb-5"
-                                    placeholder="Project Name"
+                                    placeholder="Task Name"
                                     onBlur={(e) =>
                                         onSearchFieldChange(
                                             "name",
@@ -126,17 +125,17 @@ function Index({ auth, projects, queryParams = null }) {
                                     <Table.BasicHeader label="Actions" />
                                 </Table.Header>
                                 <Table.Body
-                                    data={projects.data}
-                                    render={(project) => (
+                                    data={tasks.data}
+                                    render={(task) => (
                                         <ProjectTableRow
-                                            item={project}
-                                            key={project.id}
+                                            item={task}
+                                            key={task.id}
                                         />
                                     )}
                                 ></Table.Body>
                             </Table>
 
-                            <Pagination links={projects.meta.links} />
+                            <Pagination links={tasks.meta.links} />
                         </div>
                     </div>
                 </div>
