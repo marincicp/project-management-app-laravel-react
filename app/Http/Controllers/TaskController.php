@@ -40,7 +40,7 @@ class TaskController extends Controller
         return  inertia("Task/Index", [
 
 
-            "tasks" => TaskResource::collection($tasks),
+            "tasks" =>   TaskResource::collection($tasks),
             "queryParams" => request()->query() ?: null
 
 
@@ -66,10 +66,7 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Task $task)
-    {
-        //
-    }
+    public function show(Task $task) {}
 
     /**
      * Show the form for editing the specified resource.

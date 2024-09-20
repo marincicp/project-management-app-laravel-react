@@ -1,25 +1,25 @@
+import { Table } from "@/Components";
 import { STATUS } from "@/constants";
-import { Table } from ".";
 import { Link } from "@inertiajs/react";
 
-function ProjectTableRow({ item }) {
+function TaskTableRow({ item, hideProjectNameColumn }) {
+    console.log(item, "itme");
     return (
         <Table.Row>
             <Table.Cell>{item.id}</Table.Cell>
             <Table.Cell>
                 <img width={80} src={item.image_path} alt="project img" />
             </Table.Cell>
-            <Table.Cell>
-                <Link
-                    href={route("project.show", item.id)}
-                    className="hover:underline"
-                >
-                    {item.name}
-                </Link>
-            </Table.Cell>
+            <Table.Cell>{item.name}</Table.Cell>
+
+            {!hideProjectNameColumn && (
+                <Table.Cell className="text-nowrap">
+                    {item.project.name}
+                </Table.Cell>
+            )}
             <Table.Cell>
                 <span
-                    className={` flex justify-center px-2 py-1 rounded text-white  ${
+                    className={` flex justify-center px-2 py-1 rounded text-white ${
                         STATUS[item.status]?.color
                     }`}
                 >
@@ -47,4 +47,4 @@ function ProjectTableRow({ item }) {
     );
 }
 
-export default ProjectTableRow;
+export default TaskTableRow;
