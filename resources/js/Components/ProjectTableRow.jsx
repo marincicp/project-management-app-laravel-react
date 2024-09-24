@@ -1,8 +1,15 @@
 import { STATUS } from "@/constants";
 import { Table } from ".";
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 
 function ProjectTableRow({ item }) {
+    function onDelete(id) {
+        if (!window.confirm("Are you sure you want to delete the project?"))
+            return;
+
+        router.delete(route("project.destroy", id));
+    }
+
     return (
         <Table.Row>
             <Table.Cell>{item.id}</Table.Cell>
@@ -36,12 +43,12 @@ function ProjectTableRow({ item }) {
                 >
                     Edit
                 </Link>
-                <Link
+                <button
                     className="text-red-500 hover:underline mx-1"
-                    href={route("project.destroy", item.id)}
+                    onClick={() => onDelete(item.id)}
                 >
                     Delete
-                </Link>
+                </button>
             </Table.Cell>
         </Table.Row>
     );

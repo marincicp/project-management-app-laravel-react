@@ -2,13 +2,11 @@ import Pagination from "@/Components/Pagination";
 import SelectInput from "@/Components/SelectInput";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, router } from "@inertiajs/react";
-import { ProjectTableRow, Table } from "@/Components";
+import { Head, Link, router } from "@inertiajs/react";
+import { PageContent, ProjectTableRow, Table } from "@/Components";
 
-function Index({ auth, projects, queryParams = null }) {
+function Index({ auth, projects, queryParams = null, success }) {
     queryParams = queryParams || {};
-    const queryParamsa = new URLSearchParams(location.search);
-    console.log(queryParamsa, "sd");
     const onSearchFieldChange = (name, value) => {
         if (value) {
             queryParams[name] = value;
@@ -25,122 +23,117 @@ function Index({ auth, projects, queryParams = null }) {
         onSearchFieldChange(name, e.target.value);
     };
 
-    const onSortChange = (name) => {
-        console.log(name);
-        console.log(queryParams);
+    // const onSortChange = (name) => {
+    //     console.log(name);
+    //     console.log(queryParams);
 
-        if (name === queryParams.sort_field) {
-            if (queryParams.sort_direction === "asc") {
-                queryParams.sort_direction = "desc";
-            } else {
-                queryParams.sort_direction = "asc";
-            }
-        } else {
-            queryParams.sort_field = name;
-            queryParams.sort_direction = "asc";
-        }
+    //     if (name === queryParams.sort_field) {
+    //         if (queryParams.sort_direction === "asc") {
+    //             queryParams.sort_direction = "desc";
+    //         } else {
+    //             queryParams.sort_direction = "asc";
+    //         }
+    //     } else {
+    //         queryParams.sort_field = name;
+    //         queryParams.sort_direction = "asc";
+    //     }
 
-        router.get(route("project.index"), queryParams);
-    };
+    //     router.get(route("project.index"), queryParams);
+    // };
 
     return (
         <AuthenticatedLayout
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Projects
-                </h2>
+                <div className="flex justify-between items-center">
+                    <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                        Projects
+                    </h2>
+                    <Link
+                        href={route("project.create")}
+                        className="bg-emerald-500 py-1 px-3 rounded shadow transition-all hover:bg-emerald-300"
+                    >
+                        Add new project
+                    </Link>
+                </div>
             }
         >
             <Head title="Projects" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900 dark:text-gray-100">
-                            <div>
-                                <TextInput
-                                    defaultValue={queryParams.name}
-                                    className="w-2/5 mb-5"
-                                    placeholder="Project Name"
-                                    onBlur={(e) =>
+            {/* TODO srediti message */}
+            {success && (
+                <div className="bg-emerald-600 text-white rounded">
+                    {success}
+                </div>
+            )}
+            <PageContent>
+                <div>
+                    <TextInput
+                        defaultValue={queryParams.name}
+                        className="w-2/5 mb-5"
+                        placeholder="Project Name"
+                        onBlur={(e) =>
+                            onSearchFieldChange("name", e.target.value)
+                        }
+                        onKeyPress={(e) => onKeyPress("name", e)}
+                    />
+                </div>
+                <div className="overflow-auto">
+                    <Table
+                        columns="2rem minmax(min-content,2fr) 1fr 1fr 1fr 1fr 1fr"
+                        queryParams={queryParams}
+                        sortRoute="project.index"
+                    >
+                        <Table.Header>
+                            <Table.SortableHeader queryName="id" label="ID" />
+                            <Table.BasicHeader label="Image" />
+                            <Table.SortableHeader
+                                queryName="name"
+                                label="Name"
+                            />
+                            <th>
+                                <SelectInput
+                                    defaultValue={queryParams.status}
+                                    className="w-full"
+                                    onChange={(e) =>
                                         onSearchFieldChange(
-                                            "name",
+                                            "status",
                                             e.target.value
                                         )
                                     }
-                                    onKeyPress={(e) => onKeyPress("name", e)}
+                                >
+                                    <option value="">Select Status...</option>
+                                    <option value="in_progress">
+                                        In Progress
+                                    </option>
+                                    <option value="pending">Pending</option>
+                                    <option value="completed">Completed</option>
+                                </SelectInput>
+                            </th>
+                            <Table.SortableHeader
+                                queryName="created_at"
+                                label="Created At"
+                            />
+                            <Table.SortableHeader
+                                queryName="due_date"
+                                label="Due Date"
+                            />
+                            <Table.BasicHeader label="Created By" />
+                            <Table.BasicHeader label="Actions" />
+                        </Table.Header>
+                        <Table.Body
+                            data={projects.data}
+                            render={(project) => (
+                                <ProjectTableRow
+                                    item={project}
+                                    key={project.id}
                                 />
-                            </div>
-                            <div className="overflow-auto"></div>
-
-                            <Table
-                                columns="2rem minmax(min-content,2fr) 1fr 1fr 1fr 1fr 1fr"
-                                queryParams={queryParams}
-                                sortRoute="project.index"
-                            >
-                                <Table.Header>
-                                    <Table.SortableHeader
-                                        queryName="id"
-                                        label="ID"
-                                    />
-                                    <Table.BasicHeader label="Image" />
-                                    <Table.SortableHeader
-                                        queryName="name"
-                                        label="Name"
-                                    />
-                                    <th>
-                                        <SelectInput
-                                            defaultValue={queryParams.status}
-                                            className="w-full"
-                                            onChange={(e) =>
-                                                onSearchFieldChange(
-                                                    "status",
-                                                    e.target.value
-                                                )
-                                            }
-                                        >
-                                            <option value="">
-                                                Select Status...
-                                            </option>
-                                            <option value="in_progress">
-                                                In Progress
-                                            </option>
-                                            <option value="pending">
-                                                Pending
-                                            </option>
-                                            <option value="completed">
-                                                Completed
-                                            </option>
-                                        </SelectInput>
-                                    </th>
-                                    <Table.SortableHeader
-                                        queryName="created_at"
-                                        label="Created At"
-                                    />
-                                    <Table.SortableHeader
-                                        queryName="due_date"
-                                        label="Due Date"
-                                    />
-                                    <Table.BasicHeader label="Created By" />
-                                    <Table.BasicHeader label="Actions" />
-                                </Table.Header>
-                                <Table.Body
-                                    data={projects.data}
-                                    render={(project) => (
-                                        <ProjectTableRow
-                                            item={project}
-                                            key={project.id}
-                                        />
-                                    )}
-                                ></Table.Body>
-                            </Table>
-
-                            <Pagination links={projects.meta.links} />
-                        </div>
-                    </div>
+                            )}
+                        ></Table.Body>
+                    </Table>
                 </div>
-            </div>
+                <Pagination links={projects.meta.links} />
+            </PageContent>
         </AuthenticatedLayout>
     );
 }

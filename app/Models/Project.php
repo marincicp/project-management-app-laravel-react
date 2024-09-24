@@ -12,6 +12,8 @@ class Project extends Model
     use HasFactory;
 
 
+    protected $fillable =  ["name", "image_path", "due_date", "status", "description", "created_by", "updated_by"];
+
     public function tasks(): HasMany
     {
 

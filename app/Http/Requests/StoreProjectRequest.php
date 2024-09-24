@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\File;
 
 class StoreProjectRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class StoreProjectRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +24,13 @@ class StoreProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "name" => ["required"],
+            "image" => ["nullable", File::types(["png", "jpg", "jpeg"])],
+            "description" => ["string"],
+            "due_date" => ["nullable", "date"],
+            "status" => ["required", Rule::in(["pending", "in_progress", "complete"])]
         ];
     }
 }
+
+// make enum for status
